@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Loffi
 
-## Getting Started
+이 프로젝트는 로스트아크 라는 게임의 API를 활용하여 유저들에게 편의성을 제공하기 위한 웹 서비스 입니다.
 
-First, run the development server:
+## Introduction
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+현재 기획중인 기능들은 다음과 같습니다.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 거래소 및 경매장 아이템 차트 (5분 갱신)
+- 크리스탈:골드 대비 가격 차트
+- 생활재료 가격 차트
+- 재련, 상급재련 효율 계산기
+- 주차 회수 계산기(1640으로 하하베를 다니면 몇 주안에 제로섬이 될지)
+- 각종 로아 효율 정보를 포스팅(클리어 골드)
+- 패치노트
+- 메뉴 바에서 원하는 기능만 가져올 수 있는 UI/UX 제공
+- (beta) 초월 및 엘릭서 너프 후
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Teams
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+개발자는 일단 저 혼자 진행합니다.
 
-## Learn More
+## Skill
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js
+- React
