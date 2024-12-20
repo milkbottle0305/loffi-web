@@ -13,7 +13,7 @@ export default function Home() {
     </p>,
   ];
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center">
+    <div className="flex h-[500px] w-full flex-col items-center justify-center">
       <TitleInfoList
         title="Title"
         renderInfoList={() => (
