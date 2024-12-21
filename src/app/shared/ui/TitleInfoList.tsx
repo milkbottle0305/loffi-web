@@ -1,5 +1,3 @@
-import { JSX } from 'react';
-
 type TitleInfoListProps = {
   title: string;
   renderInfoList: () => JSX.Element;
