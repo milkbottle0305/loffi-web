@@ -20,27 +20,27 @@ export const CommonHeader = () => {
           <ul className="flex w-32 flex-col items-end justify-end gap-4">
             <li>
               <Link className="text-lg hover:font-bold" href="/chart">
-                1번 메뉴
+                차트
               </Link>
             </li>
             <li>
               <Link className="text-lg hover:font-bold" href="/reforge">
-                2번 메뉴
+                재련 계산기
               </Link>
             </li>
             <li>
               <Link className="text-lg hover:font-bold" href="/sang_reforge">
-                3번 메뉴
+                상급재련 계산기
               </Link>
             </li>
             <li>
               <Link className="text-lg hover:font-bold" href="/parking">
-                4번 메뉴
+                주차효율 계산기
               </Link>
             </li>
             <li>
               <Link className="text-lg hover:font-bold" href="/info">
-                5번 메뉴
+                정보
               </Link>
             </li>
           </ul>
