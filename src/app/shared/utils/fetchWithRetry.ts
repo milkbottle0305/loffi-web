@@ -7,7 +7,6 @@ export const fetchWithRetry = async (url: string, attempt: number = 0): Promise<
     throw new Error('No valid API keys available');
   }
 
-  console.log(url);
   const response = await fetch(url, {
     method: 'GET',
     headers: {
