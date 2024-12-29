@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { createQueryString } from '../utils/createQueryString';
 
-type GetNoticesParams = {
+export type GetNoticesParams = {
   searchText?: string;
   type?: '공지' | '점검' | '상점' | '이벤트';
 };
 
-type GetNoticesResponse = {
+export type GetNoticesResponse = {
   Title: string;
   Date: string;
   Link: string;
