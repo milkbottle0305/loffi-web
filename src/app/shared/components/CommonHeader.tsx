@@ -6,7 +6,7 @@ export const CommonHeader = () => {
   return (
     <header className="sticky bottom-0 flex items-center justify-between bg-white px-8 py-1 shadow-md backdrop-blur">
       <Link href="/">
-        <h1 className="p-2 text-3xl font-extrabold">사이트</h1>
+        <h1 className="p-2 text-3xl font-extrabold">로피</h1>
       </Link>
       <Popover>
         <PopoverTrigger asChild>
