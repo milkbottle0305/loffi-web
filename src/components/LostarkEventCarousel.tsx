@@ -5,16 +5,11 @@ export const LostarkEventCarousel = async () => {
   const events = await getLostarkEvents();
 
   return (
-    <Slider
-      className="h-[191.58px] w-96"
-      showIndicators={true}
-      showControls={false}
-      autoSlide={true}
-    >
+    <Slider className="h-48 w-96" showIndicators={true} showControls={false} autoSlide={true}>
       {events.map((event) => (
         <a key={event.Title} href={event.Link} className="relative h-full w-full">
           <img
-            className="h-[191.58px] w-full rounded-lg border-2 border-solid border-gray-300 bg-cover bg-center"
+            className="h-48 w-96 rounded-lg border-2 border-solid border-gray-300 bg-cover bg-center"
             src={event.Thumbnail}
             alt={event.Title}
           />

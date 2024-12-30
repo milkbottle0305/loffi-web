@@ -14,7 +14,7 @@ export default function Home() {
       </div>
 
       {/* 로스트아크 정보 배치 */}
-      <div className="mb-8 flex w-full flex-col items-center justify-center gap-8 px-6 md:px-16 lg:flex-row">
+      <div className="mb-16 flex w-full flex-col items-center justify-center gap-8 lg:flex-row">
         <LostarkNotice />
         <LostarkEventCarousel />
       </div>
