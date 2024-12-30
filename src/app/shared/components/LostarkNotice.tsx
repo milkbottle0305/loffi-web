@@ -8,7 +8,6 @@ export const LostarkNotice = () => {
       renderInfoList={() => {
         return (
           <ul className="flex w-full flex-col items-start gap-1">
-            {/* @ts-expect-error Async Server Component */}
             <LostarkNoticeRows />
           </ul>
         );
