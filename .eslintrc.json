@@ -50,7 +50,9 @@
         "specialLink": ["hrefLeft", "hrefRight"],
         "aspects": ["noHref", "invalidHref", "preferButton"]
       }
-    ]
+    ],
+    "import/no-unresolved": "error",
+    "import/no-relative-parent-imports": "error"
   },
   "settings": {
     "react": {
