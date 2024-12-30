@@ -4,7 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 
 export const CommonHeader = () => {
   return (
-    <header className="sticky bottom-0 flex items-center justify-between bg-white px-8 py-1 shadow-md backdrop-blur">
+    <header className="sticky top-0 z-50 flex items-center justify-between bg-white px-8 py-1 shadow-md backdrop-blur">
       <Link href="/">
         <h1 className="p-2 text-3xl font-extrabold">로피</h1>
       </Link>
