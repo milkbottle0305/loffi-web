@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/ui/Popover';
 
 export const CommonHeader = () => {
   return (

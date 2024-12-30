@@ -1,5 +1,5 @@
-import { getLostarkEvents } from '../ssr/getLostarkEvents';
-import { Slider } from '../ui/Slider';
+import { getLostarkEvents } from '@/ssr/getLostarkEvents';
+import { Slider } from '@/ui/Slider';
 
 export const LostarkEventCarousel = async () => {
   const events = await getLostarkEvents();
@@ -9,7 +9,7 @@ export const LostarkEventCarousel = async () => {
       className="h-[191.58px] w-96"
       showIndicators={true}
       showControls={false}
-      autoSlide={false}
+      autoSlide={true}
     >
       {events.map((event) => (
         <a key={event.Title} href={event.Link} className="relative h-full w-full">

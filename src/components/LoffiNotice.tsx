@@ -1,7 +1,7 @@
 'use client';
-import { useGetNoticesQuery } from '../queries/useGetNoticesQuery';
-import { SkeletonView } from '../ui/Skeleton';
-import { TitleInfoList } from '../ui/TitleInfoList';
+import { useGetNoticesQuery } from '@/queries/useGetNoticesQuery';
+import { SkeletonView } from '@/ui/Skeleton';
+import { TitleInfoList } from '@/ui/TitleInfoList';
 
 const NOTICES_COUNT = 5;
 

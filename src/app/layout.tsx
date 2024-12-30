@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import './globals.css';
-import { CommonHeader } from '@/app/shared/components/CommonHeader';
+import '@/app/globals.css';
+import { CommonHeader } from '@/components/CommonHeader';
 
 export const metadata: Metadata = {
   title: '로피 - 효율적인 로생을 위해!',

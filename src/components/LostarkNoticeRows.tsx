@@ -1,4 +1,4 @@
-import { getNotices } from '../ssr/getNotices';
+import { getNotices } from '@/ssr/getNotices';
 
 export const LostarkNoticeRows = async () => {
   const notices = await getNotices();

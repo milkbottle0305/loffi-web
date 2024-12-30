@@ -1,4 +1,4 @@
-import { TitleInfoList } from '../ui/TitleInfoList';
+import { TitleInfoList } from '@/ui/TitleInfoList';
 import { LostarkNoticeRows } from './LostarkNoticeRows';
 
 export const LostarkNotice = () => {

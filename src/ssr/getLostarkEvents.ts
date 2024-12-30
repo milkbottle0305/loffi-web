@@ -1,7 +1,7 @@
 'use server';
 
-import { ApiConstants, LOSTKARK_API_URL } from '../constants/ApiConstants';
-import { fetchWithRetry } from '../utils/fetchWithRetry';
+import { ApiConstants, LOSTKARK_API_URL } from '@/constants/ApiConstants';
+import { fetchWithRetry } from '@/utils/fetchWithRetry';
 
 type GetLostarkEventsResponse = {
   Title: string;

@@ -1,5 +1,5 @@
-import { ApiConstants, LOSTKARK_API_URL } from '@/app/shared/constants/ApiConstants';
-import { fetchWithRetry } from '@/app/shared/utils/fetchWithRetry';
+import { ApiConstants, LOSTKARK_API_URL } from '@/constants/ApiConstants';
+import { fetchWithRetry } from '@/utils/fetchWithRetry';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {

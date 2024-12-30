@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { LostarkEventCarousel } from './shared/components/LostarkEventCarousel';
-import { LostarkNotice } from './shared/components/LostarkNotice';
+import { LostarkEventCarousel } from '@/components/LostarkEventCarousel';
+import { LostarkNotice } from '@/components/LostarkNotice';
 
 export default function Home() {
   return (
