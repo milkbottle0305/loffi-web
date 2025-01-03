@@ -21,7 +21,7 @@ export const ReforgeCalculator = () => {
   };
 
   return (
-    <div className="mt-4 flex flex-col items-center">
+    <div className="mt-4 flex w-full flex-col items-center">
       <div className="flex items-center gap-2">
         <select className="rounded border p-2" value={tier} onChange={handleTierChange}>
           <option value="2-1티어">2티어: 500</option>
@@ -43,7 +43,9 @@ export const ReforgeCalculator = () => {
         />
         <label>슈모익, 하익 이벤트</label>
       </div>
-      <ReforgeCalculatorGrid tier={tier} />
+      <div className="max-w-full overflow-x-auto">
+        <ReforgeCalculatorGrid tier={tier} />
+      </div>
     </div>
   );
 };

@@ -6,7 +6,7 @@ export const ItemList = () => {
   }));
 
   return (
-    <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
+    <div className="w-full rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
       <div className="mb-4 flex items-start justify-between">
         <p className="text-lg font-semibold">아이템 시세</p>
         <p className="text-xs text-gray-400">2024.12.23 06:12:35 갱신</p>

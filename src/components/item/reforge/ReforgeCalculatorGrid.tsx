@@ -1,4 +1,5 @@
 import { GridSelector } from '@/ui/GridSelector';
+import { ChangeEvent, useState } from 'react';
 
 const getColumnCount = (tier: string): number => {
   switch (tier) {
@@ -23,38 +24,133 @@ export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({ ti
   const columnCount = getColumnCount(tier);
   const rowCount = 6;
 
+  // 상태 관리
+  const [jangi, setJangi] = useState<string[]>(Array.from({ length: rowCount }, () => ''));
+  const [failChance, setFailChance] = useState<string[]>(
+    Array.from({ length: rowCount }, () => '')
+  );
+
+  // 장기 입력 변경 핸들러
+  const onJangiChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+    setJangi((prev) => {
+      const next = [...prev];
+      next[index] = e.target.value;
+      return next;
+    });
+  };
+
+  // 장기 포커스 아웃 핸들러
+  const onJangiBlur = (index: number) => {
+    setJangi((prev) => {
+      const next = [...prev];
+      if (next[index] === '' || isNaN(Number(next[index]))) {
+        next[index] = '0';
+      } else {
+        const value = parseFloat(next[index]);
+        next[index] =
+          value > 100 ? '100' : value < 0 ? '0' : (Math.floor(value * 100) / 100).toString();
+      }
+      return next;
+    });
+  };
+
+  // 실패 확률 입력 변경 핸들러
+  const onFailChanceChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+    setFailChance((prev) => {
+      const next = [...prev];
+      next[index] = e.target.value;
+      return next;
+    });
+  };
+
+  // 실패 확률 포커스 아웃 핸들러
+  const onFailChanceBlur = (index: number) => {
+    setFailChance((prev) => {
+      const next = [...prev];
+      if (next[index] === '' || isNaN(Number(next[index]))) {
+        next[index] = '0';
+      } else {
+        const value = parseFloat(next[index]);
+        next[index] =
+          value > 100 ? '100' : value < 0 ? '0' : (Math.floor(value * 100) / 100).toString();
+      }
+      return next;
+    });
+  };
+
   return (
-    <table>
+    <table className="table-fixed border-spacing-0 border-none p-0">
       <thead>
         <tr>
-          <td></td>
-          <td>
-            <table>
-              <tbody>
+          <th className="border-spacing-0 border-none p-0">
+            <table className="border-spacing-0 p-0">
+              <thead>
+                <tr>
+                  <th className="h-10 w-10 border-spacing-0 whitespace-nowrap border-none p-0 text-center text-sm text-gray-500">
+                    장비
+                  </th>
+                  <th className="h-10 w-10 border-spacing-0 whitespace-nowrap border-none p-0 text-center text-sm text-gray-500">
+                    장기
+                  </th>
+                  <th className="h-10 w-10 border-spacing-0 border-none p-0 text-center text-[8px] text-gray-500">
+                    실패로 증가된 확률
+                  </th>
+                </tr>
+              </thead>
+            </table>
+          </th>
+          <th>
+            <table className="table-fixed border-spacing-0 border-none p-0">
+              <thead>
                 <tr>
                   {Array.from({ length: columnCount }, (_, i) => (
-                    <td key={i} className="text-sm text-gray-500" width="40">{`+${i + 1}`}</td>
+                    <th
+                      key={i}
+                      className="h-10 w-10 border-spacing-0 border-none p-0 text-center text-sm text-gray-500"
+                    >{`+${i + 1}`}</th>
                   ))}
                 </tr>
-              </tbody>
+              </thead>
             </table>
-          </td>
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>
-            <table>
+            <table className="table-fixed border-spacing-0 border-none p-0">
               <tbody>
                 {Array.from({ length: rowCount }, (_, i) => (
-                  <tr>
-                    <td height="40">방어구</td>
+                  <tr key={i}>
+                    <td className="h-10 w-10 border-spacing-0 whitespace-nowrap border-none p-0 text-center text-xs text-gray-500">
+                      방어구
+                    </td>
+                    <td className="h-10 w-10 border-spacing-0 whitespace-nowrap border-none p-0 text-center text-xs">
+                      <input
+                        type="text"
+                        placeholder="0.00%"
+                        className="h-10 w-10"
+                        value={jangi[i]}
+                        onChange={(e) => onJangiChange(e, i)}
+                        onBlur={() => onJangiBlur(i)}
+                      />
+                    </td>
+                    <td className="h-10 w-10 border-spacing-0 whitespace-nowrap border-none p-0 text-center text-xs">
+                      <input
+                        type="text"
+                        placeholder="0.00%"
+                        className="h-10 w-10"
+                        value={failChance[i]}
+                        onChange={(e) => onFailChanceChange(e, i)}
+                        onBlur={() => onFailChanceBlur(i)}
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </td>
-          <td>
+          <td className="border-spacing-0 border-none p-0">
             <GridSelector columnCount={columnCount} rowCount={rowCount} />
           </td>
         </tr>
