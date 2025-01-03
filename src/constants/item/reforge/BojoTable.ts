@@ -1,4 +1,4 @@
-import { Tier } from './RefiningTable';
+import { Tier } from './ReforgeTable';
 
 type Tier2Breath = '별의 숨결';
 type Tier3Breath = '태양의 은총' | '태양의 축복' | '태양의 가호';
