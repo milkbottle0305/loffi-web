@@ -24,12 +24,13 @@ type PagoeStone =
 type SuhoStone = '수호석 조각' | '수호석 결정' | '수호강석' | '정제된 수호강석' | '운명의 수호석';
 
 export type Tier = '2-1티어' | '3-1티어' | '3-2티어' | '3-3티어' | '4-1티어';
-type Equipment = '무기' | '방어구';
+export type Equipment = '무기' | '방어구';
 
 type MaterialType = Yunghwa | Papyeon | DolpaStone | PagoeStone | SuhoStone | 'silling' | 'gold';
 
 /** 티어-장비종류-재련단계에 해당되는 재료를 나타내는 인터페이스 */
-interface ReforgeTableRow extends Partial<Record<MaterialType, number>> {
+export type ReforgeMaterials = Partial<Record<MaterialType, number>>;
+interface ReforgeTableRow extends ReforgeMaterials {
   experience: number; // 경험치
   probability: number; // 성공 확률
 }
