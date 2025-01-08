@@ -24,8 +24,13 @@ interface GetMarketItemBody {
   SortCondition?: 'ASC' | 'DESC';
 }
 
-export const getMarketItem = async (body: GetMarketItemBody): Promise<MarketItem[]> => {
-  const { items, ok, statusText } = await fetchPostWithPagination(
+interface GetMarketItemResponse {
+  items: MarketItem[];
+  responseTime: string;
+}
+
+export const getMarketItem = async (body: GetMarketItemBody): Promise<GetMarketItemResponse> => {
+  const { items, ok, statusText, responseTime } = await fetchPostWithPagination(
     `${LOSTKARK_API_URL}${ApiConstants.MARKET_ITEMS}`,
     { ...body, PageNo: body.PageNo ?? 1 }, // 기본 PageNo 설정
     {
@@ -38,6 +43,5 @@ export const getMarketItem = async (body: GetMarketItemBody): Promise<MarketItem
     throw new Error(`Failed to fetch market items: ${statusText}`);
   }
 
-  console.log('items', items);
-  return items;
+  return { items, responseTime };
 };

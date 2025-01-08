@@ -5,11 +5,12 @@ import {
   ReforgeMaterials,
 } from '@/constants/item/reforge/ReforgeTable';
 
-function calculateReforgeMaterials({
+export function calculateReforgeMaterials({
   tier,
   equipment,
   step,
   experience,
+  janggi,
   increasedProbability,
   isLowTierSupport,
   isExpressEvent,
@@ -19,6 +20,7 @@ function calculateReforgeMaterials({
   equipment: Equipment;
   step: number;
   experience: number;
+  janggi: number;
   increasedProbability: number;
   isLowTierSupport: boolean;
   isExpressEvent: boolean;
@@ -31,6 +33,7 @@ function calculateReforgeMaterials({
         equipment,
         step,
         experience,
+        janggi,
         increasedProbability,
         isLowTierSupport,
         isExpressEvent,
@@ -46,6 +49,7 @@ function calculateReforgeMaterials({
       return worstReforgeMaterials({
         tier,
         equipment,
+        janggi,
         step,
         experience,
       });
@@ -77,11 +81,13 @@ function bestReforgeMaterials({
 function worstReforgeMaterials({
   tier,
   equipment,
+  janggi,
   step,
   experience,
 }: {
   tier: Tier;
   equipment: Equipment;
+  janggi: number;
   step: number;
   experience: number;
 }): ReforgeMaterials {
@@ -100,6 +106,7 @@ function averageReforgeMaterials({
   equipment,
   step,
   experience,
+  janggi,
   increasedProbability,
   isLowTierSupport,
   isExpressEvent,
@@ -108,6 +115,7 @@ function averageReforgeMaterials({
   equipment: Equipment;
   step: number;
   experience: number;
+  janggi: number;
   increasedProbability: number;
   isLowTierSupport: boolean;
   isExpressEvent: boolean;

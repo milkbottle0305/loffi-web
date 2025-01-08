@@ -123,7 +123,7 @@ export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({ ti
                 {Array.from({ length: rowCount }, (_, i) => (
                   <tr key={i}>
                     <td className="h-10 w-10 border-spacing-0 whitespace-nowrap border-none p-0 text-center text-xs text-gray-500">
-                      방어구
+                      {i === rowCount - 1 ? '무기' : '방어구'}
                     </td>
                     <td className="h-10 w-10 border-spacing-0 whitespace-nowrap border-none p-0 text-center text-xs">
                       <input

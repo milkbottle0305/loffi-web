@@ -35,7 +35,7 @@ export const fetchPostWithPagination = async (
   body: { PageNo: number; [key: string]: any },
   options: Omit<RequestInit, 'body'>,
   attempt: number = 0
-): Promise<{ items: any[]; ok: boolean; statusText: string }> => {
+): Promise<{ items: any[]; ok: boolean; statusText: string; responseTime: string }> => {
   const apiKeys = [process.env.LOSTARK_API_KEY_1, process.env.LOSTARK_API_KEY_2];
   const apiKey = apiKeys[attempt];
 
@@ -45,6 +45,7 @@ export const fetchPostWithPagination = async (
 
   let allItems: any[] = [];
   let currentPage = body.PageNo;
+  let finalResponseTime: string | undefined; // 마지막 응답 시간을 저장
 
   while (true) {
     const response = await fetch(url, {
@@ -56,6 +57,9 @@ export const fetchPostWithPagination = async (
       },
       body: JSON.stringify({ ...body, PageNo: currentPage }),
     });
+
+    const responseTime = response.headers.get('Date') || new Date().toISOString(); // 응답 시간 기록
+    finalResponseTime = responseTime; // 업데이트
 
     if (response.ok) {
       const data = await response.json();
@@ -71,9 +75,14 @@ export const fetchPostWithPagination = async (
       console.log(`API key ${attempt + 1} limit reached. Trying next key...`);
       return fetchPostWithPagination(url, body, options, attempt + 1);
     } else {
-      return { items: allItems, ok: false, statusText: response.statusText };
+      return {
+        items: allItems,
+        ok: false,
+        statusText: response.statusText,
+        responseTime: finalResponseTime || '',
+      };
     }
   }
 
-  return { items: allItems, ok: true, statusText: '' };
+  return { items: allItems, ok: true, statusText: '', responseTime: finalResponseTime || '' };
 };
