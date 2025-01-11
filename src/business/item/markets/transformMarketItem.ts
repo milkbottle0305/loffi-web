@@ -61,7 +61,7 @@ function calculatePaypeonBundleToOnePrice(item: MarketItem): number {
  */
 function removeUselessItem(items: MarketItem[]): MarketItem[] {
   // 파편 아이템 중 정해진 ID만 필터링하고 생명의 돌파석을 제외합니다.
-  return items.filter((item) => {
+  const transformedItems = items.filter((item) => {
     if (item.Name.includes('파편')) {
       return Object.values(ItemId).includes(item.Id);
     } else if (item.Name === '생명의 돌파석') {
@@ -70,6 +70,8 @@ function removeUselessItem(items: MarketItem[]): MarketItem[] {
       return true;
     }
   });
+
+  return transformedItems;
 }
 
 /**

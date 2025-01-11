@@ -1,5 +1,5 @@
 import { GridSelector } from '@/ui/GridSelector';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 
 const getColumnCount = (tier: string): number => {
   switch (tier) {
@@ -18,21 +18,56 @@ const getColumnCount = (tier: string): number => {
 
 interface ReforgeCalculatorGridProps {
   tier: string;
+  rowCount: number;
+  experience: string[];
+  setExperience: React.Dispatch<React.SetStateAction<string[]>>;
+  janggi: string[];
+  setJanggi: React.Dispatch<React.SetStateAction<string[]>>;
+  failChance: string[];
+  setFailChance: React.Dispatch<React.SetStateAction<string[]>>;
+  onChangeSelectedCells: (selectedCells: Set<string>) => void;
 }
 
-export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({ tier }) => {
+export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({
+  tier,
+  rowCount,
+  experience,
+  setExperience,
+  janggi,
+  setJanggi,
+  failChance,
+  setFailChance,
+  onChangeSelectedCells,
+}) => {
   const columnCount = getColumnCount(tier);
-  const rowCount = 6;
 
-  // 상태 관리
-  const [jangi, setJangi] = useState<string[]>(Array.from({ length: rowCount }, () => ''));
-  const [failChance, setFailChance] = useState<string[]>(
-    Array.from({ length: rowCount }, () => '')
-  );
+  // 경험치 입력 변경 핸들러
+  const onExperienceChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+    setExperience((prev) => {
+      const next = [...prev];
+      next[index] = e.target.value;
+      return next;
+    });
+  };
+
+  // 경험치 포커스 아웃 핸들러
+  const onExperienceBlur = (index: number) => {
+    setExperience((prev) => {
+      const next = [...prev];
+      if (next[index] === '' || isNaN(Number(next[index]))) {
+        next[index] = '0';
+      } else {
+        const value = parseFloat(next[index]);
+        next[index] =
+          value > 100 ? '100' : value < 0 ? '0' : (Math.floor(value * 100) / 100).toString();
+      }
+      return next;
+    });
+  };
 
   // 장기 입력 변경 핸들러
   const onJangiChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    setJangi((prev) => {
+    setJanggi((prev) => {
       const next = [...prev];
       next[index] = e.target.value;
       return next;
@@ -41,7 +76,7 @@ export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({ ti
 
   // 장기 포커스 아웃 핸들러
   const onJangiBlur = (index: number) => {
-    setJangi((prev) => {
+    setJanggi((prev) => {
       const next = [...prev];
       if (next[index] === '' || isNaN(Number(next[index]))) {
         next[index] = '0';
@@ -90,6 +125,9 @@ export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({ ti
                     장비
                   </th>
                   <th className="h-10 w-10 border-spacing-0 whitespace-nowrap border-none p-0 text-center text-sm text-gray-500">
+                    경험치
+                  </th>
+                  <th className="h-10 w-10 border-spacing-0 whitespace-nowrap border-none p-0 text-center text-sm text-gray-500">
                     장기
                   </th>
                   <th className="h-10 w-10 border-spacing-0 border-none p-0 text-center text-[8px] text-gray-500">
@@ -130,7 +168,17 @@ export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({ ti
                         type="text"
                         placeholder="0.00%"
                         className="h-10 w-10"
-                        value={jangi[i]}
+                        value={experience[i]}
+                        onChange={(e) => onExperienceChange(e, i)}
+                        onBlur={() => onExperienceBlur(i)}
+                      />
+                    </td>
+                    <td className="h-10 w-10 border-spacing-0 whitespace-nowrap border-none p-0 text-center text-xs">
+                      <input
+                        type="text"
+                        placeholder="0.00%"
+                        className="h-10 w-10"
+                        value={janggi[i]}
                         onChange={(e) => onJangiChange(e, i)}
                         onBlur={() => onJangiBlur(i)}
                       />
@@ -151,7 +199,11 @@ export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({ ti
             </table>
           </td>
           <td className="border-spacing-0 border-none p-0">
-            <GridSelector columnCount={columnCount} rowCount={rowCount} />
+            <GridSelector
+              columnCount={columnCount}
+              rowCount={rowCount}
+              onChangeSelectedCells={onChangeSelectedCells}
+            />
           </td>
         </tr>
       </tbody>

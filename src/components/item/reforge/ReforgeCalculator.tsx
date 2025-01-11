@@ -1,9 +1,10 @@
 'use client';
 import { Equipment, Tier } from '@/constants/item/reforge/ReforgeTable';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ReforgeCalculatorGrid } from './ReforgeCalculatorGrid';
 import { MarketItemWithOneGold } from '@/business/item/markets/transformMarketItem';
-import { calculateReforgeMaterials } from '@/business/item/reforge/calculateReforgeGold';
+
+const RowCount = 6;
 
 interface ReforgeCalculatorProps {
   items: MarketItemWithOneGold[];
@@ -17,7 +18,7 @@ export interface EquipmentInfo {
   increasedProbability: number;
 }
 
-export const ReforgeCalculator = ({ items }: ReforgeCalculatorProps) => {
+export const ReforgeCalculator: React.FC<ReforgeCalculatorProps> = ({ items }) => {
   const [tier, setTier] = useState<Tier>('4-1티어');
   // 저티어 성장 지원 여부
   const [isLowTierSupport, setIsLowTierSupport] = useState(true);
@@ -25,6 +26,63 @@ export const ReforgeCalculator = ({ items }: ReforgeCalculatorProps) => {
   const [isExpressEvent, setIsExpressEvent] = useState(false);
   // 재련 대상의 장비 정보
   const [equipmentInfos, setEquipmentInfos] = useState<EquipmentInfo[]>([]);
+
+  const onChangeSelectedCells: (selectedCells: Set<string>) => void = (selectedCells) => {
+    // Step 1: `selectedCells`를 `row` 값별로 그룹화
+    const rowsMap: { [key: number]: string[] } = {};
+    selectedCells.forEach((cell) => {
+      const [row, col] = cell.split('-').map(Number);
+      if (!rowsMap[row]) rowsMap[row] = [];
+      rowsMap[row].push(col.toString());
+    });
+
+    // Step 2: 각 row별로 가장 작은 col을 찾아 `experience`, `janggi`, `failChance` 설정
+    const newEquipmentInfos: EquipmentInfo[] = [];
+
+    for (const row in rowsMap) {
+      const cols = rowsMap[row];
+      const sortedCols = cols.map(Number).sort((a, b) => a - b); // `col`들을 정렬
+
+      const minCol = sortedCols[0]; // 가장 작은 col을 추출
+      const equipmentInfosForRow: EquipmentInfo[] = [];
+
+      // 가장 작은 col에 해당하는 셀에 대해 experience, janggi, failChance 설정
+      equipmentInfosForRow.push({
+        equipment: minCol <= 4 ? '방어구' : '무기',
+        step: minCol + 1,
+        experience: Number(experience[parseInt(row)]),
+        janggi: Number(janggi[parseInt(row)]),
+        increasedProbability: Number(failChance[parseInt(row)]),
+      });
+
+      // 나머지 col에 대해서는 experience, janggi, failChance는 0으로 설정하고 step, equipment만 설정
+      for (let i = 1; i < sortedCols.length; i++) {
+        const col = sortedCols[i];
+        equipmentInfosForRow.push({
+          equipment: col <= 4 ? '방어구' : '무기',
+          step: col + 1,
+          experience: 0,
+          janggi: 0,
+          increasedProbability: 0,
+        });
+      }
+
+      // `equipmentInfosForRow`에 추가된 정보들을 `newEquipmentInfos`에 넣기
+      newEquipmentInfos.push(...equipmentInfosForRow);
+    }
+
+    console.log(newEquipmentInfos);
+    setEquipmentInfos(newEquipmentInfos);
+  };
+
+  // 경험치, 장기, 실패 증가 확률 정보
+  const [experience, setExperience] = useState<string[]>(
+    Array.from({ length: RowCount }, () => '')
+  );
+  const [janggi, setJanggi] = useState<string[]>(Array.from({ length: RowCount }, () => ''));
+  const [failChance, setFailChance] = useState<string[]>(
+    Array.from({ length: RowCount }, () => '')
+  );
 
   const handleTierChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedTier = event.target.value as Tier;
@@ -92,7 +150,17 @@ export const ReforgeCalculator = ({ items }: ReforgeCalculatorProps) => {
           <label>슈모익, 하익 이벤트</label>
         </div>
         <div className="max-w-full overflow-x-auto">
-          <ReforgeCalculatorGrid tier={tier} />
+          <ReforgeCalculatorGrid
+            tier={tier}
+            rowCount={RowCount}
+            experience={experience}
+            setExperience={setExperience}
+            janggi={janggi}
+            setJanggi={setJanggi}
+            failChance={failChance}
+            setFailChance={setFailChance}
+            onChangeSelectedCells={onChangeSelectedCells}
+          />
         </div>
       </div>
       <div className="flex items-center gap-2">
