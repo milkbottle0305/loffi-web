@@ -2,7 +2,7 @@
 import {
   AdditionalCase,
   Equipment,
-  MaterialType,
+  ReforgeMaterial,
   ReforgeCase,
   ReforgeMaterials,
   Tier,
@@ -81,7 +81,7 @@ export const ReforgeCalculator: React.FC<ReforgeCalculatorProps> = ({ items }) =
   };
 
   const [totalReforgeMaterials, setTotalReforgeMaterials] = useState<
-    Partial<Record<MaterialType, number>>
+    Partial<Record<ReforgeMaterial, number>>
   >({});
 
   const calculateTotalReforgeMaterials = useCallback(() => {

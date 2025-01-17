@@ -28,7 +28,7 @@ export type Equipment = '무기' | '방어구';
 export type ReforgeCase = 'average' | 'best' | 'worst';
 export type AdditionalCase = 'none' | 'optional' | 'full';
 
-export type MaterialType =
+export type ReforgeMaterial =
   | Yunghwa
   | Papyeon
   | DolpaStone
@@ -71,21 +71,21 @@ const suhoStoneList: SuhoStone[] = [
   '운명의 수호석',
 ];
 
-const otherMaterials: MaterialType[] = ['silling', 'gold'];
+const otherMaterials: ReforgeMaterial[] = ['silling', 'gold'];
 
 // 타입 가드 함수 구현
-export function isMaterialType(value: string): value is MaterialType {
+export function isMaterialType(value: string): value is ReforgeMaterial {
   return (
     yunghwaList.includes(value as Yunghwa) ||
     papyeonList.includes(value as Papyeon) ||
     dolpaStoneList.includes(value as DolpaStone) ||
     pagoeStoneList.includes(value as PagoeStone) ||
     suhoStoneList.includes(value as SuhoStone) ||
-    otherMaterials.includes(value as MaterialType)
+    otherMaterials.includes(value as ReforgeMaterial)
   );
 }
 
-export type ReforgeMaterials = Partial<Record<MaterialType, number>>;
+export type ReforgeMaterials = Partial<Record<ReforgeMaterial, number>>;
 /** 티어-장비종류-재련단계에 해당되는 재료를 나타내는 인터페이스 */
 export interface ReforgeTableRow extends ReforgeMaterials {
   experience: number; // 경험치

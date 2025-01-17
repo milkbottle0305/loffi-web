@@ -8,7 +8,7 @@ import {
   AdditionalCase,
 } from '@/constants/item/reforge/ReforgeTable';
 import { MarketItemWithOneGold } from '../markets/transformMarketItem';
-import { BookMaterials, BreathMaterials } from '@/constants/item/reforge/BojoTable';
+import { BreathTable } from '@/constants/item/reforge/BojoTable';
 
 export function calculateReforgeMaterials({
   items,
@@ -47,6 +47,7 @@ export function calculateReforgeMaterials({
         increasedProbability,
         isLowTierSupport,
         isExpressEvent,
+        additionalCase,
       });
     case 'best':
       return bestReforgeMaterials({
@@ -55,6 +56,7 @@ export function calculateReforgeMaterials({
         equipment,
         step,
         experience,
+        additionalCase,
       });
     case 'worst':
       return worstReforgeMaterials({
@@ -64,6 +66,7 @@ export function calculateReforgeMaterials({
         janggi,
         step,
         experience,
+        additionalCase,
       });
   }
 }
@@ -75,12 +78,14 @@ function bestReforgeMaterials({
   equipment,
   step,
   experience,
+  additionalCase,
 }: {
   items: MarketItemWithOneGold[];
   tier: Tier;
   equipment: Equipment;
   step: number;
   experience: number;
+  additionalCase: AdditionalCase;
 }): ReforgeMaterials {
   let oneTryReforgeMaterials = ReforgeTable[tier][equipment][step];
   const { experience: _exp, probability: _prob, ...materials } = oneTryReforgeMaterials;
@@ -100,6 +105,7 @@ function worstReforgeMaterials({
   janggi,
   step,
   experience,
+  additionalCase,
 }: {
   items: MarketItemWithOneGold[];
   tier: Tier;
@@ -107,6 +113,7 @@ function worstReforgeMaterials({
   janggi: number;
   step: number;
   experience: number;
+  additionalCase: AdditionalCase;
 }): ReforgeMaterials {
   let oneTryReforgeMaterials = ReforgeTable[tier][equipment][step];
   const { experience: _exp, probability: _prob, ...materials } = oneTryReforgeMaterials;
@@ -127,6 +134,7 @@ function averageReforgeMaterials({
   increasedProbability,
   isLowTierSupport,
   isExpressEvent,
+  additionalCase,
 }: {
   items: MarketItemWithOneGold[];
   tier: Tier;
@@ -137,6 +145,7 @@ function averageReforgeMaterials({
   increasedProbability: number;
   isLowTierSupport: boolean;
   isExpressEvent: boolean;
+  additionalCase: AdditionalCase;
 }): ReforgeMaterials {
   let averageReforgeMaterials = ReforgeTable[tier][equipment][step];
   averageReforgeMaterials = {
