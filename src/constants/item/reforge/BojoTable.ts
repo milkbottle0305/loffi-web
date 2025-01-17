@@ -4,6 +4,8 @@ type Tier2Breath = '별의 숨결';
 type Tier3Breath = '태양의 은총' | '태양의 축복' | '태양의 가호';
 type Tier4Breath = '빙하의 숨결' | '용암의 숨결';
 type Breath = Tier2Breath | Tier3Breath | Tier4Breath;
+
+export type BreathMaterials = Partial<Record<Breath, number>>;
 interface BreathRow {
   maxAmount: number;
   probability: number;
@@ -135,3 +137,5 @@ type Tier3_3Book =
   | '재봉술 : 쇠락 [16-19]';
 type Tier3_4Book = '야금술 : 업화 [11-14]' | '재봉술 : 업화 [11-14]';
 type Book = Tier3_1Book | Tier3_2Book | Tier3_3Book | Tier3_4Book;
+
+export type BookMaterials = Partial<Record<Book, number>>;

@@ -4,12 +4,22 @@ import { ReforgeCalculator } from '@/components/item/reforge/ReforgeCalculator';
 import { getMarketItem } from '@/ssr/getMarketItem';
 
 export default async function ReforgePage() {
-  const { items, responseTime } = await getMarketItem({
+  const { items: reforgeItems, responseTime } = await getMarketItem({
     Sort: 'GRADE',
     CategoryCode: 50010,
     PageNo: 1,
     SortCondition: 'ASC',
   });
+
+  const { items: reforgeAdditionalItems } = await getMarketItem({
+    Sort: 'GRADE',
+    CategoryCode: 50020,
+    PageNo: 1,
+    SortCondition: 'ASC',
+  });
+
+  const items = [...reforgeItems, ...reforgeAdditionalItems];
+
   const transformItems = transformMarketItem(items);
 
   return (

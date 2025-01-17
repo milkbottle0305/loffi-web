@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 interface GridSelectorProps {
   rowCount: number;
   columnCount: number;
-  onChangeSelectedCells: (selectedCells: Set<string>) => void;
+  setSelectedCells: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
 interface Position {
@@ -14,7 +14,7 @@ interface Position {
 export const GridSelector: React.FC<GridSelectorProps> = ({
   rowCount,
   columnCount,
-  onChangeSelectedCells,
+  setSelectedCells: _setSelectedCells,
 }) => {
   const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
   const [dragMode, setDragMode] = useState<'SELECT' | 'DESELECT' | 'DEFAULT'>('DEFAULT');
@@ -66,14 +66,11 @@ export const GridSelector: React.FC<GridSelectorProps> = ({
         }
       }
       setSelectedCells(newSelectedCells);
-
-      if (onChangeSelectedCells) {
-        onChangeSelectedCells(newSelectedCells);
-      }
+      _setSelectedCells(newSelectedCells);
     }
     setDragMode('DEFAULT');
     setDragRect(null);
-  }, [dragMode, dragRect, selectedCells, positionToKey, onChangeSelectedCells]);
+  }, [dragMode, dragRect, selectedCells, positionToKey]);
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -87,6 +84,7 @@ export const GridSelector: React.FC<GridSelectorProps> = ({
         setDragMode('SELECT');
       }
       setSelectedCells(newSelectedCells);
+      _setSelectedCells(newSelectedCells);
     },
     [selectedCells, positionToKey]
   );

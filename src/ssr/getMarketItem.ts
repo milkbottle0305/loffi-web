@@ -1,5 +1,6 @@
 import { ApiConstants, LOSTKARK_API_URL } from '@/constants/ApiConstants';
 import { fetchPostWithPagination } from '@/utils/fetchWithRetry';
+import { transformISOToString } from '@/utils/transformISOToString';
 
 export type MarketItem = {
   Id: number;
@@ -30,7 +31,12 @@ interface GetMarketItemResponse {
 }
 
 export const getMarketItem = async (body: GetMarketItemBody): Promise<GetMarketItemResponse> => {
-  const { items, ok, statusText, responseTime } = await fetchPostWithPagination(
+  const {
+    items,
+    ok,
+    statusText,
+    responseTime: _reponseTime,
+  } = await fetchPostWithPagination(
     `${LOSTKARK_API_URL}${ApiConstants.MARKET_ITEMS}`,
     { ...body, PageNo: body.PageNo ?? 1 }, // 기본 PageNo 설정
     {
@@ -38,6 +44,8 @@ export const getMarketItem = async (body: GetMarketItemBody): Promise<GetMarketI
       next: { revalidate: 3600 },
     }
   );
+
+  const responseTime = transformISOToString(_reponseTime);
 
   if (!ok) {
     throw new Error(`Failed to fetch market items: ${statusText}`);

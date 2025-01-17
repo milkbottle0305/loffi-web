@@ -4,7 +4,7 @@ type Yunghwa =
   | '최상급 오레하 융화 재료'
   | '아비도스 융화 재료';
 
-type Papyeon = '조화의 파편' | '명예의 파편' | '운명의 파편';
+export type Papyeon = '조화의 파편' | '명예의 파편' | '운명의 파편';
 
 type DolpaStone =
   | '조화의 돌파석'
@@ -25,12 +25,69 @@ type SuhoStone = '수호석 조각' | '수호석 결정' | '수호강석' | '정
 
 export type Tier = '2-1티어' | '3-1티어' | '3-2티어' | '3-3티어' | '4-1티어';
 export type Equipment = '무기' | '방어구';
+export type ReforgeCase = 'average' | 'best' | 'worst';
+export type AdditionalCase = 'none' | 'optional' | 'full';
 
-type MaterialType = Yunghwa | Papyeon | DolpaStone | PagoeStone | SuhoStone | 'silling' | 'gold';
+export type MaterialType =
+  | Yunghwa
+  | Papyeon
+  | DolpaStone
+  | PagoeStone
+  | SuhoStone
+  | 'silling'
+  | 'gold';
 
-/** 티어-장비종류-재련단계에 해당되는 재료를 나타내는 인터페이스 */
+const yunghwaList: Yunghwa[] = [
+  '오레하 융화 재료',
+  '상급 오레하 융화 재료',
+  '최상급 오레하 융화 재료',
+  '아비도스 융화 재료',
+];
+
+const papyeonList: Papyeon[] = ['조화의 파편', '명예의 파편', '운명의 파편'];
+
+const dolpaStoneList: DolpaStone[] = [
+  '조화의 돌파석',
+  '위대한 명예의 돌파석',
+  '경이로운 명예의 돌파석',
+  '찬란한 명예의 돌파석',
+  '운명의 돌파석',
+];
+
+const pagoeStoneList: PagoeStone[] = [
+  '파괴석 조각',
+  '파괴석',
+  '파괴석 결정',
+  '파괴강석',
+  '정제된 파괴강석',
+  '운명의 파괴석',
+];
+
+const suhoStoneList: SuhoStone[] = [
+  '수호석 조각',
+  '수호석 결정',
+  '수호강석',
+  '정제된 수호강석',
+  '운명의 수호석',
+];
+
+const otherMaterials: MaterialType[] = ['silling', 'gold'];
+
+// 타입 가드 함수 구현
+export function isMaterialType(value: string): value is MaterialType {
+  return (
+    yunghwaList.includes(value as Yunghwa) ||
+    papyeonList.includes(value as Papyeon) ||
+    dolpaStoneList.includes(value as DolpaStone) ||
+    pagoeStoneList.includes(value as PagoeStone) ||
+    suhoStoneList.includes(value as SuhoStone) ||
+    otherMaterials.includes(value as MaterialType)
+  );
+}
+
 export type ReforgeMaterials = Partial<Record<MaterialType, number>>;
-interface ReforgeTableRow extends ReforgeMaterials {
+/** 티어-장비종류-재련단계에 해당되는 재료를 나타내는 인터페이스 */
+export interface ReforgeTableRow extends ReforgeMaterials {
   experience: number; // 경험치
   probability: number; // 성공 확률
 }

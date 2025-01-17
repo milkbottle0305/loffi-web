@@ -1,8 +1,18 @@
 'use client';
-import { Equipment, Tier } from '@/constants/item/reforge/ReforgeTable';
-import { useState } from 'react';
+import {
+  AdditionalCase,
+  Equipment,
+  MaterialType,
+  ReforgeCase,
+  ReforgeMaterials,
+  Tier,
+} from '@/constants/item/reforge/ReforgeTable';
+import { useCallback, useEffect, useState } from 'react';
 import { ReforgeCalculatorGrid } from './ReforgeCalculatorGrid';
 import { MarketItemWithOneGold } from '@/business/item/markets/transformMarketItem';
+import { add, debounce } from 'lodash';
+import { calculateReforgeMaterials } from '@/business/item/reforge/calculateReforgeGold';
+import { converItemNameToSrc } from '@/utils/convertItemNameToSrc';
 
 const RowCount = 6;
 
@@ -19,62 +29,18 @@ export interface EquipmentInfo {
 }
 
 export const ReforgeCalculator: React.FC<ReforgeCalculatorProps> = ({ items }) => {
+  // 재련 케이스 선택
+  // 티어, 재련확률 케이스, 추가재료 케이스 선택
   const [tier, setTier] = useState<Tier>('4-1티어');
+  const [reforgeCase, setReforgeCase] = useState<ReforgeCase>('best');
+  const [additionalCase, setAdditionalCase] = useState<AdditionalCase>('none');
   // 저티어 성장 지원 여부
   const [isLowTierSupport, setIsLowTierSupport] = useState(true);
   // 슈모익, 하익 이벤트 지원 여부
   const [isExpressEvent, setIsExpressEvent] = useState(false);
   // 재련 대상의 장비 정보
   const [equipmentInfos, setEquipmentInfos] = useState<EquipmentInfo[]>([]);
-
-  const onChangeSelectedCells: (selectedCells: Set<string>) => void = (selectedCells) => {
-    // Step 1: `selectedCells`를 `row` 값별로 그룹화
-    const rowsMap: { [key: number]: string[] } = {};
-    selectedCells.forEach((cell) => {
-      const [row, col] = cell.split('-').map(Number);
-      if (!rowsMap[row]) rowsMap[row] = [];
-      rowsMap[row].push(col.toString());
-    });
-
-    // Step 2: 각 row별로 가장 작은 col을 찾아 `experience`, `janggi`, `failChance` 설정
-    const newEquipmentInfos: EquipmentInfo[] = [];
-
-    for (const row in rowsMap) {
-      const cols = rowsMap[row];
-      const sortedCols = cols.map(Number).sort((a, b) => a - b); // `col`들을 정렬
-
-      const minCol = sortedCols[0]; // 가장 작은 col을 추출
-      const equipmentInfosForRow: EquipmentInfo[] = [];
-
-      // 가장 작은 col에 해당하는 셀에 대해 experience, janggi, failChance 설정
-      equipmentInfosForRow.push({
-        equipment: minCol <= 4 ? '방어구' : '무기',
-        step: minCol + 1,
-        experience: Number(experience[parseInt(row)]),
-        janggi: Number(janggi[parseInt(row)]),
-        increasedProbability: Number(failChance[parseInt(row)]),
-      });
-
-      // 나머지 col에 대해서는 experience, janggi, failChance는 0으로 설정하고 step, equipment만 설정
-      for (let i = 1; i < sortedCols.length; i++) {
-        const col = sortedCols[i];
-        equipmentInfosForRow.push({
-          equipment: col <= 4 ? '방어구' : '무기',
-          step: col + 1,
-          experience: 0,
-          janggi: 0,
-          increasedProbability: 0,
-        });
-      }
-
-      // `equipmentInfosForRow`에 추가된 정보들을 `newEquipmentInfos`에 넣기
-      newEquipmentInfos.push(...equipmentInfosForRow);
-    }
-
-    console.log(newEquipmentInfos);
-    setEquipmentInfos(newEquipmentInfos);
-  };
-
+  const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
   // 경험치, 장기, 실패 증가 확률 정보
   const [experience, setExperience] = useState<string[]>(
     Array.from({ length: RowCount }, () => '')
@@ -94,36 +60,110 @@ export const ReforgeCalculator: React.FC<ReforgeCalculatorProps> = ({ items }) =
     }
   };
 
-  const calculateTotalCost = [
-    {
-      Icon: 'https://cdn-lostark.game.onstove.com/efui_iconatlas/use/use_8_250.png',
-      Amount: 4,
-    },
-    {
-      Icon: 'https://cdn-lostark.game.onstove.com/efui_iconatlas/use/use_8_250.png',
-      Amount: 4,
-    },
-    {
-      Icon: 'https://cdn-lostark.game.onstove.com/efui_iconatlas/use/use_8_250.png',
-      Amount: 4,
-    },
-    {
-      Icon: 'https://cdn-lostark.game.onstove.com/efui_iconatlas/use/use_8_250.png',
-      Amount: 4,
-    },
-  ];
+  const handleReforgeCaseChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedReforgeCase = event.target.value as ReforgeCase;
 
-  // interface IconAmount {
-  //   Icon: string;
-  //   Amount: number;
-  // };
-  // const calculateTotalCost: IconAmount[] = useMemo(() => {
-  //   calculateReforgeMaterials({
-  //     tier,
-  //     equipment: '방어구',
+    if (['best', 'average', 'worst'].includes(selectedReforgeCase)) {
+      setReforgeCase(selectedReforgeCase); // 유효한 값일 경우에만 상태 변경
+    } else {
+      console.error('해당 케이스는 존재하지 않습니다: ', selectedReforgeCase); // 잘못된 값 선택 시 에러 처리
+    }
+  };
 
-  //   });
-  // }, [];
+  const handleAdditionalCaseChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedAdditionalCase = event.target.value as AdditionalCase;
+
+    if (['none', 'optional', 'full'].includes(selectedAdditionalCase)) {
+      setAdditionalCase(selectedAdditionalCase); // 유효한 값일 경우에만 상태 변경
+    } else {
+      console.error('해당 케이스는 존재하지 않습니다: ', selectedAdditionalCase); // 잘못된 값 선택 시 에러 처리
+    }
+  };
+
+  const [totalReforgeMaterials, setTotalReforgeMaterials] = useState<
+    Partial<Record<MaterialType, number>>
+  >({});
+
+  const calculateTotalReforgeMaterials = useCallback(() => {
+    const totalMaterials: ReforgeMaterials = {};
+
+    equipmentInfos.forEach((equipmentInfo) => {
+      const reforgeMaterials = calculateReforgeMaterials({
+        items,
+        tier,
+        equipment: equipmentInfo.equipment,
+        step: equipmentInfo.step,
+        experience: equipmentInfo.experience,
+        janggi: equipmentInfo.janggi,
+        increasedProbability: equipmentInfo.increasedProbability,
+        isLowTierSupport,
+        isExpressEvent,
+        reforgeCase,
+        additionalCase,
+      });
+
+      (Object.keys(reforgeMaterials) as (keyof ReforgeMaterials)[]).forEach((material) => {
+        const count = reforgeMaterials[material] || 0;
+        totalMaterials[material] = (totalMaterials[material] || 0) + count;
+      });
+    });
+
+    setTotalReforgeMaterials(totalMaterials);
+  }, [equipmentInfos, tier, isLowTierSupport, isExpressEvent, reforgeCase, additionalCase]);
+
+  const onChangeSelectedCells = useCallback(() => {
+    if (selectedCells.size === 0) {
+      setEquipmentInfos([]);
+      return;
+    }
+    const expJanggiFailTarget: Map<number, number> = new Map();
+    selectedCells.forEach((cell) => {
+      const [row, col] = cell.split('-').map(Number);
+      if (expJanggiFailTarget.has(row)) {
+        const prevCol = expJanggiFailTarget.get(row);
+        prevCol! > col ? expJanggiFailTarget.set(row, col) : null;
+      } else {
+        expJanggiFailTarget.set(row, col);
+      }
+    });
+
+    const newEquipmentInfos: EquipmentInfo[] = [];
+    selectedCells.forEach((cell) => {
+      const [row, col] = cell.split('-').map(Number);
+      if (expJanggiFailTarget.get(row) !== col) {
+        newEquipmentInfos.push({
+          equipment: row < 5 ? '방어구' : '무기',
+          step: col + 1,
+          experience: 0,
+          janggi: 0,
+          increasedProbability: 0,
+        });
+      } else {
+        newEquipmentInfos.push({
+          equipment: row < 5 ? '방어구' : '무기',
+          step: col + 1,
+          experience: Number(experience[row]),
+          janggi: Number(janggi[row]),
+          increasedProbability: Number(failChance[row]),
+        });
+      }
+    });
+
+    setEquipmentInfos(newEquipmentInfos);
+  }, [selectedCells, experience, janggi, failChance]);
+
+  const debouncedOnChangeSelectedCells = useCallback(debounce(onChangeSelectedCells, 1000), [
+    onChangeSelectedCells,
+  ]);
+
+  useEffect(() => {
+    debouncedOnChangeSelectedCells();
+    return debouncedOnChangeSelectedCells.cancel;
+  }, [debouncedOnChangeSelectedCells]);
+
+  useEffect(() => {
+    calculateTotalReforgeMaterials();
+  }, [calculateTotalReforgeMaterials, equipmentInfos]);
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -135,6 +175,24 @@ export const ReforgeCalculator: React.FC<ReforgeCalculatorProps> = ({ items }) =
             <option value="3-2티어">3티어: 1390</option>
             <option value="3-3티어">3티어: 1525</option>
             <option value="4-1티어">4티어: 1590</option>
+          </select>
+          <select
+            className="rounded border p-2"
+            value={reforgeCase}
+            onChange={handleReforgeCaseChange}
+          >
+            <option value="best">원트</option>
+            <option value="average">평균</option>
+            <option value="worst">장기백</option>
+          </select>
+          <select
+            className="rounded border p-2"
+            value={additionalCase}
+            onChange={handleAdditionalCaseChange}
+          >
+            <option value="none">노숨</option>
+            <option value="optional">최적 숨결</option>
+            <option value="full">풀숨</option>
           </select>
           <input
             type="checkbox"
@@ -159,17 +217,17 @@ export const ReforgeCalculator: React.FC<ReforgeCalculatorProps> = ({ items }) =
             setJanggi={setJanggi}
             failChance={failChance}
             setFailChance={setFailChance}
-            onChangeSelectedCells={onChangeSelectedCells}
+            setSelectedCells={setSelectedCells}
           />
         </div>
       </div>
       <div className="flex items-center gap-2">
         <p className="text-2xl font-bold">재련 총 비용</p>
         <div className="flex items-center justify-center gap-1">
-          {calculateTotalCost.map((cost, index) => (
+          {Object.entries(totalReforgeMaterials).map(([material, amount], index) => (
             <div key={index} className="flex items-center gap-1">
-              <img src={cost.Icon} alt="재료" className="h-8 w-8" />
-              <p className="font-semibold">{cost.Amount}개</p>
+              <img src={converItemNameToSrc(material)} alt={material} className="h-8 w-8" />
+              <p className="font-semibold">{amount}개</p>
             </div>
           ))}
         </div>

@@ -3,9 +3,15 @@ import {
   Equipment,
   ReforgeTable,
   ReforgeMaterials,
+  ReforgeCase,
+  Papyeon,
+  AdditionalCase,
 } from '@/constants/item/reforge/ReforgeTable';
+import { MarketItemWithOneGold } from '../markets/transformMarketItem';
+import { BookMaterials, BreathMaterials } from '@/constants/item/reforge/BojoTable';
 
 export function calculateReforgeMaterials({
+  items,
   tier,
   equipment,
   step,
@@ -15,7 +21,9 @@ export function calculateReforgeMaterials({
   isLowTierSupport,
   isExpressEvent,
   reforgeCase,
+  additionalCase,
 }: {
+  items: MarketItemWithOneGold[];
   tier: Tier;
   equipment: Equipment;
   step: number;
@@ -24,11 +32,13 @@ export function calculateReforgeMaterials({
   increasedProbability: number;
   isLowTierSupport: boolean;
   isExpressEvent: boolean;
-  reforgeCase: 'average' | 'best' | 'worst';
+  reforgeCase: ReforgeCase;
+  additionalCase: AdditionalCase;
 }): ReforgeMaterials {
   switch (reforgeCase) {
     case 'average':
       return averageReforgeMaterials({
+        items,
         tier,
         equipment,
         step,
@@ -40,6 +50,7 @@ export function calculateReforgeMaterials({
       });
     case 'best':
       return bestReforgeMaterials({
+        items,
         tier,
         equipment,
         step,
@@ -47,6 +58,7 @@ export function calculateReforgeMaterials({
       });
     case 'worst':
       return worstReforgeMaterials({
+        items,
         tier,
         equipment,
         janggi,
@@ -58,50 +70,55 @@ export function calculateReforgeMaterials({
 
 // 1트 만에 성공했을 때 필요한 재련 재료 계산
 function bestReforgeMaterials({
+  items,
   tier,
   equipment,
   step,
   experience,
 }: {
+  items: MarketItemWithOneGold[];
   tier: Tier;
   equipment: Equipment;
   step: number;
   experience: number;
 }): ReforgeMaterials {
   let oneTryReforgeMaterials = ReforgeTable[tier][equipment][step];
-  oneTryReforgeMaterials = {
-    ...oneTryReforgeMaterials,
-    experience: calculateExperienceToPapyeon(tier, equipment, step, experience),
-  };
+  const { experience: _exp, probability: _prob, ...materials } = oneTryReforgeMaterials;
+  const additionalPapyeon = calculateExperienceToPapyeon(tier, equipment, step, experience);
 
-  return oneTryReforgeMaterials;
+  const totalReforgeMaterials: ReforgeMaterials = { ...materials };
+  addAdditionalPapyeonToMaterials(totalReforgeMaterials, tier, additionalPapyeon);
+
+  return totalReforgeMaterials;
 }
 
 // 장기백 이었을 때 필요한 재련 재료 계산
 function worstReforgeMaterials({
+  items,
   tier,
   equipment,
   janggi,
   step,
   experience,
 }: {
+  items: MarketItemWithOneGold[];
   tier: Tier;
   equipment: Equipment;
   janggi: number;
   step: number;
   experience: number;
 }): ReforgeMaterials {
-  let worstReforgeMaterials = ReforgeTable[tier][equipment][step];
-  worstReforgeMaterials = {
-    ...worstReforgeMaterials,
-    experience: calculateExperienceToPapyeon(tier, equipment, step, experience),
-  };
-
-  return worstReforgeMaterials;
+  let oneTryReforgeMaterials = ReforgeTable[tier][equipment][step];
+  const { experience: _exp, probability: _prob, ...materials } = oneTryReforgeMaterials;
+  const additionalPapyeon = calculateExperienceToPapyeon(tier, equipment, step, experience);
+  const totalReforgeMaterials: ReforgeMaterials = { ...materials };
+  addAdditionalPapyeonToMaterials(totalReforgeMaterials, tier, additionalPapyeon);
+  return materials;
 }
 
 // 평균적으로 필요한 재련 재료 계산
 function averageReforgeMaterials({
+  items,
   tier,
   equipment,
   step,
@@ -111,6 +128,7 @@ function averageReforgeMaterials({
   isLowTierSupport,
   isExpressEvent,
 }: {
+  items: MarketItemWithOneGold[];
   tier: Tier;
   equipment: Equipment;
   step: number;
@@ -136,5 +154,22 @@ function calculateExperienceToPapyeon(
   step: number,
   experience: number
 ): number {
-  return Math.ceil(ReforgeTable[tier][equipment][step].experience / ((100 - experience) / 100));
+  return Math.ceil(ReforgeTable[tier][equipment][step].experience * ((100 - experience) / 100));
+}
+
+function addAdditionalPapyeonToMaterials(
+  materials: ReforgeMaterials,
+  tier: Tier,
+  additionalPapyeon: number
+): void {
+  const papyeonByTier: Record<Tier, Papyeon> = {
+    '2-1티어': '조화의 파편',
+    '3-1티어': '명예의 파편',
+    '3-2티어': '명예의 파편',
+    '3-3티어': '명예의 파편',
+    '4-1티어': '운명의 파편',
+  };
+
+  const papyeonType = papyeonByTier[tier];
+  materials[papyeonType] = (materials[papyeonType] || 0) + additionalPapyeon;
 }

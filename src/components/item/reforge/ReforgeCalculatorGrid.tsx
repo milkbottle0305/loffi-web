@@ -25,7 +25,7 @@ interface ReforgeCalculatorGridProps {
   setJanggi: React.Dispatch<React.SetStateAction<string[]>>;
   failChance: string[];
   setFailChance: React.Dispatch<React.SetStateAction<string[]>>;
-  onChangeSelectedCells: (selectedCells: Set<string>) => void;
+  setSelectedCells: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
 export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({
@@ -37,7 +37,7 @@ export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({
   setJanggi,
   failChance,
   setFailChance,
-  onChangeSelectedCells,
+  setSelectedCells,
 }) => {
   const columnCount = getColumnCount(tier);
 
@@ -202,7 +202,7 @@ export const ReforgeCalculatorGrid: React.FC<ReforgeCalculatorGridProps> = ({
             <GridSelector
               columnCount={columnCount}
               rowCount={rowCount}
-              onChangeSelectedCells={onChangeSelectedCells}
+              setSelectedCells={setSelectedCells}
             />
           </td>
         </tr>

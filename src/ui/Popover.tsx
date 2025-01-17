@@ -140,8 +140,11 @@ export const PopoverContent = ({ children }: { children: ReactNode }) => {
       ref={contentRef}
     >
       {children}
-      <button onClick={close} style={{ marginTop: '10px' }}>
-        Close
+      <button
+        onClick={close}
+        style={{ width: '100%', marginTop: '10px', display: 'flex', justifyContent: 'end' }}
+      >
+        닫기
       </button>
     </div>
   );
