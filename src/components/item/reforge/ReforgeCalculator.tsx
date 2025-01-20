@@ -12,7 +12,7 @@ import { ReforgeCalculatorGrid } from './ReforgeCalculatorGrid';
 import { MarketItemWithOneGold } from '@/business/item/markets/transformMarketItem';
 import { add, debounce } from 'lodash';
 import { calculateReforgeMaterials } from '@/business/item/reforge/calculateReforgeGold';
-import { converItemNameToSrc } from '@/utils/convertItemNameToSrc';
+import { converItemNameToSrc } from '@/lib/utils/convertItemNameToSrc';
 
 const RowCount = 6;
 

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { createQueryString } from '@/utils/createQueryString';
+import { createQueryString } from '@/lib/utils/createQueryString';
 
 export type GetNoticesParams = {
   searchText?: string;

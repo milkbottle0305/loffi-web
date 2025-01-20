@@ -1,6 +1,6 @@
 import { ItemId } from '@/constants/item/ItemOptions';
 import { MarketItem } from '@/ssr/getMarketItem';
-import { converItemNameToSrc } from '@/utils/convertItemNameToSrc';
+import { converItemNameToSrc } from '@/lib/utils/convertItemNameToSrc';
 
 const Small_Tier23Papyeon_BundleCount = 500;
 const Medium_Tier23Papyeon_BundleCount = 1000;
