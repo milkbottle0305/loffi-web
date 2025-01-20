@@ -1,14 +1,15 @@
+import { ReforgeTable } from '@/constants/item/reforge/ReforgeTable';
+import { ReforgeMaterials } from '@/types/item/reforge/ReforgeMaterials';
 import {
   Tier,
   Equipment,
-  ReforgeTable,
-  ReforgeMaterials,
   ReforgeCase,
   Papyeon,
   AdditionalCase,
-} from '@/constants/item/reforge/ReforgeTable';
+} from '@/types/item/reforge/ReforgeMaterials';
 import { MarketItemWithOneGold } from '../markets/transformMarketItem';
 import { BreathTable } from '@/constants/item/reforge/BojoTable';
+import { Breath, BreathRow } from '@/types/item/reforge/AdditionalReforgeMaterials';
 
 export function calculateReforgeMaterials({
   items,
@@ -117,8 +118,18 @@ function worstReforgeMaterials({
 }): ReforgeMaterials {
   let oneTryReforgeMaterials = ReforgeTable[tier][equipment][step];
   const { experience: _exp, probability: _prob, ...materials } = oneTryReforgeMaterials;
+  oneTryReforgeMaterials = {
+    ...materials,
+    ...calculateFullAdditionalMaterials(
+      items,
+      tier,
+      equipment,
+      oneTryReforgeMaterials.probability,
+      oneTryReforgeMaterials.probability
+    ),
+  };
+
   const additionalPapyeon = calculateExperienceToPapyeon(tier, equipment, step, experience);
-  const totalReforgeMaterials: ReforgeMaterials = { ...materials };
   addAdditionalPapyeonToMaterials(totalReforgeMaterials, tier, additionalPapyeon);
   return materials;
 }
@@ -181,4 +192,93 @@ function addAdditionalPapyeonToMaterials(
 
   const papyeonType = papyeonByTier[tier];
   materials[papyeonType] = (materials[papyeonType] || 0) + additionalPapyeon;
+}
+
+function calculateFullAdditionalMaterials(
+  items: MarketItemWithOneGold[],
+  tier: Tier,
+  equipment: Equipment,
+  probability: number,
+  maxAdditionalMaterialsProbability: number
+): Partial<Record<Breath, number>> {
+  const breathRow: Partial<Record<Breath, BreathRow>> = BreathTable[tier][probability];
+  switch (tier) {
+    case '4-1티어':
+      return calculate41TierFullAdditionalMaterials(
+        breathRow,
+        items,
+        equipment,
+        maxAdditionalMaterialsProbability
+      );
+    default:
+      return calculateNone41TierFullAdditionalMaterials(
+        breathRow,
+        items,
+        maxAdditionalMaterialsProbability
+      );
+  }
+}
+
+function calculate41TierFullAdditionalMaterials(
+  breathRow: Partial<Record<Breath, BreathRow>>,
+  items: MarketItemWithOneGold[],
+  equipment: Equipment,
+  maxAdditionalMaterialsProbability: number
+): Partial<Record<Breath, number>> {
+  const efficientList: [Breath, number][] = [];
+  items.forEach((item) => {
+    if (equipment === '무기' && item.Name === '용암의 숨결' && breathRow['용암의 숨결']) {
+      efficientList.push(['용암의 숨결', breathRow['용암의 숨결'].probability / item.OnePrice]);
+    } else if (equipment === '방어구' && item.Name === '빙하의 숨결' && breathRow['빙하의 숨결']) {
+      efficientList.push(['빙하의 숨결', breathRow['빙하의 숨결'].probability / item.OnePrice]);
+    }
+  });
+  efficientList.sort((a, b) => b[1] - a[1]);
+
+  const additionalMaterials: Partial<Record<Breath, number>> = {};
+  let additionalMaterialsProbability = 0;
+  efficientList.every(([breath, _]) => {
+    if (!breathRow[breath]) return false;
+    for (let i = 0; i < breathRow[breath].maxAmount; i++) {
+      additionalMaterialsProbability += breathRow[breath].probability;
+      additionalMaterials[breath] = (additionalMaterials[breath] || 0) + 1;
+      if (additionalMaterialsProbability >= maxAdditionalMaterialsProbability) {
+        return false;
+      }
+    }
+  });
+
+  return additionalMaterials;
+}
+
+function calculateNone41TierFullAdditionalMaterials(
+  breathRow: Partial<Record<Breath, BreathRow>>,
+  items: MarketItemWithOneGold[],
+  maxAdditionalMaterialsProbability: number
+): Partial<Record<Breath, number>> {
+  const efficientList: [Breath, number][] = [];
+
+  Object.entries(breathRow).forEach(([breath, row]) => {
+    items.forEach((item) => {
+      if (item.Name === breath && row) {
+        efficientList.push([breath as Breath, row.probability / item.OnePrice]);
+      }
+    });
+  });
+  efficientList.sort((a, b) => b[1] - a[1]);
+
+  const additionalMaterials: Partial<Record<Breath, number>> = {};
+  let additionalMaterialsProbability = 0;
+  efficientList.every(([breath, _]) => {
+    if (!breathRow[breath]) return false;
+    for (let i = 0; i < breathRow[breath].maxAmount; i++) {
+      additionalMaterialsProbability += breathRow[breath].probability;
+      additionalMaterials[breath] = (additionalMaterials[breath] || 0) + 1;
+      if (additionalMaterialsProbability >= maxAdditionalMaterialsProbability) {
+        return false;
+      }
+    }
+  });
+
+  return additionalMaterials;
 }

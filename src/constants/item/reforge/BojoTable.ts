@@ -1,15 +1,10 @@
-import { Tier } from './ReforgeTable';
-
-type Tier2Breath = '별의 숨결';
-type Tier3Breath = '태양의 은총' | '태양의 축복' | '태양의 가호';
-type Tier4Breath = '빙하의 숨결' | '용암의 숨결';
-type Breath = Tier2Breath | Tier3Breath | Tier4Breath;
-
-export type BreathMaterials = Partial<Record<Breath, number>>;
-interface BreathRow {
-  maxAmount: number;
-  probability: number;
-}
+import {
+  Tier3Breath,
+  BreathRow,
+  Tier4Breath,
+  Breath,
+} from '@/types/item/reforge/AdditionalReforgeMaterials';
+import { Tier } from '@/types/item/reforge/ReforgeMaterials';
 
 const Tier3BreathTable: Record<number, Record<Tier3Breath, BreathRow>> = {
   0.6: {

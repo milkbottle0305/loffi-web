@@ -1,4 +1,4 @@
-import { Tier } from './ReforgeTable';
+import { Tier } from '@/types/item/reforge/ReforgeMaterials';
 
 interface SupportRow {
   increaseProbability?: number;

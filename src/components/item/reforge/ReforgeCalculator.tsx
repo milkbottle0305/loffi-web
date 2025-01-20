@@ -1,12 +1,12 @@
 'use client';
+import { ReforgeMaterials } from '@/types/item/reforge/ReforgeMaterials';
 import {
   AdditionalCase,
   Equipment,
   ReforgeMaterial,
   ReforgeCase,
-  ReforgeMaterials,
   Tier,
-} from '@/constants/item/reforge/ReforgeTable';
+} from '@/types/item/reforge/ReforgeMaterials';
 import { useCallback, useEffect, useState } from 'react';
 import { ReforgeCalculatorGrid } from './ReforgeCalculatorGrid';
 import { MarketItemWithOneGold } from '@/business/item/markets/transformMarketItem';
