@@ -23,6 +23,5 @@ export const getLostarkEvents = async (): Promise<GetLostarkEventsResponse[]> =>
   }
 
   const data = await response.json();
-  console.log('data', data);
   return data;
 };
