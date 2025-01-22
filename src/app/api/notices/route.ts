@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const query = searchParams.toString();
   try {
-    const data = await fetchWithRetry(`${LOSTKARK_API_URL}${ApiConstants.NOTICES}?${query}`);
+    const data = await fetchWithRetry(`${LOSTKARK_API_URL}${ApiConstants.NOTICES}?${query}`, req);
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
